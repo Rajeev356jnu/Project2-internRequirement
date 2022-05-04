@@ -8,11 +8,11 @@ const collegeSchema = new mongoose.Schema({
         trim: true
     },
 
-    fullName: {
-        type: String,
-        required: 'fullName is required',
-        trim: true
-    },
+    // fullName: {
+    //     type: String,
+    //     required: 'fullName is required',
+    //     trim: true
+    // },
     logoLink: {
         type: String,
         required: 'logoLink is mandatory',
