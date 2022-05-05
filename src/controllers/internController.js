@@ -21,27 +21,21 @@ const createIntern = async function (req, res) {
     if (!Object.keys(data).length) return res.status(404).send({ status: false, msg: "Please Provide Valid Input Details" })
     //-------------------------------------check data validity----------------------------------
 
-    if (!(data.email)) { return res.status(400).send({ status: false, msg: "Email is required" }) }
+    if (!isValid(data.email)) { return res.status(400).send({ status: false, msg: "Email is required" }) }
     if (!(/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(data.email))) {
       return res.status(400).send({ status: false, msg: "Please provide a valid email" })
     }
 
-    if (!(data.name)) { return res.status(400).send({ status: false, msg: "First name is required" }) }
+    if (!isValid(data.name)) { return res.status(400).send({ status: false, msg: "First name is required" }) }
 
-    if (!(data.mobile)) { return res.status(400).send({ status: false, msg: "Mobile number is required" }) }
+    if (!isValid(data.mobile)) { return res.status(400).send({ status: false, msg: "Mobile number is required" }) }
 
     if (!(/^[6-9]\d{9}$/.test(data.mobile))) {
       return res.status(400).send({ status: false, msg: "please provide a valid moblie Number" })
     }
+    if (!isValid(data.collegeName)) { return res.status(400).send({ status: false, msg: "College name is required" }) }
 
-
-    if (!(data.collegeId)) { return res.status(400).send({ status: false, msg: "CollegeId is required" }) }
-    let college = await collegeModel.findById(data.collegeId)
-
-    if (!college) return res.status(400).send({ status: false, msg: "No such collegeId found" })
-
-
-    //-------------------------------/check email duplicacy/------------------------------------------------------//
+ //-------------------------------/check email duplicacy/------------------------------------------------------//
 
     let emailCheck = await internModel.findOne({ email: data.email })
 
@@ -53,13 +47,20 @@ const createIntern = async function (req, res) {
 
     if (mobileCheck) { return res.status(409).send({ status: false, msg: "Mobile Number already exists" }) }
 
- 
-    const internData = {
-      name: data.name, email: data.email, mobile: data.mobile, collegeId: data.collegeId}
-      const resultIntern = await internModel.create(internData)
-      res.status(201).send(resultIntern)
+    const collegeName = data.collegeName
+    
+    const collegeId = await collegeModel.findOne({ name: collegeName })
+    if (!isValid(collegeId)) { return res.status(400).send({ status: false, msg: "College Name not matched" }) }
+    
+    const newDataCollege = collegeId._id
+    
 
-    }
+    const savedData = { name: data.name, email: data.email, mobile: data.mobile, collegeId: newDataCollege }
+    const internData = await internModel.create(savedData)
+    res.status(201).send({ status: "internData Created", data: internData })
+
+  }
+    
 
 catch (err) {
 

@@ -18,12 +18,12 @@ const createCollege = async function (req, res) {
 
     if (Object.keys(data).length = 0) { return res.status(400).send({ status: false, msg: "Input is required" }) }
 
-      if (!data.name) { return res.status(400).send({ status: false, msg: "Name is required" }) }
+      if (!isValid(data.name)) { return res.status(400).send({ status: false, msg: "Name is required" }) }
 
-      if (!data.fullName) { return res.status(400).send({ status: false, msg: "Full Name is required" }) }
+      if (!isValid(data.fullName)) { return res.status(400).send({ status: false, msg: "Full Name is required" }) }
 
 
-      if (!data.logoLink) { return res.status(400).send({ status: false, msg: " LogoLink is required" }) }
+      if (!isValid(data.logoLink)) { return res.status(400).send({ status: false, msg: " LogoLink is required" }) }
 
       let checkCollegeName = await collegeModel.findOne({ name: data.name })
       if (checkCollegeName) { return res.status(400).send({ msg: "Name Already exist" }) }
@@ -57,16 +57,16 @@ const collegeDetails = async function (req, res) {
 
     const newData = await collegeModel.findOne({ name: data, isDeleted: false })
     
-    if (!newData) { return res.status(400).send({ ERROR: "Data provided is not present in college Database" }) }
+    if (!isValid(newData)) { return res.status(400).send({ ERROR: "Data  not present in college Database" }) }
 
 
 
     const interests = await internModel.find({ collegeId: newData._id, isDeleted: false }).select({ name: 1, email: 1, mobile: 1 })
     if (!Object.keys(interests).length) { return res.status(400).send({ ERROR: "No intern applied " }) }
 
-    const getCollegeData = { name: newData.name, fullName: newData.fullName, logoLink: newData.logoLink, interests}
+    const collegeDetails = { name: newData.name, fullName: newData.fullName, logoLink: newData.logoLink, interests}
 
-    return res.status(200).send({ Data: getCollegeData })
+    return res.status(200).send({msg:"college Details Are", Data: collegeDetails })
 
   } catch (err) {
     return res.status(500).send({ ERROR: err.message })
