@@ -62,7 +62,7 @@ const collegeDetails = async function (req, res) {
 
 
     const interests = await internModel.find({ collegeId: newData._id, isDeleted: false }).select({ name: 1, email: 1, mobile: 1 })
-    if (!Object.keys(interests).length) { return res.status(400).send({ ERROR: "No intern applied " }) }
+    if (interests.length===0) { return res.status(404).send({ ERROR: "No intern applied " }) }
 
     const collegeDetails = { name: newData.name, fullName: newData.fullName, logoLink: newData.logoLink, interests}
 
