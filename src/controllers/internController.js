@@ -15,11 +15,11 @@ const isValid = function (value) {
 // create intern//
 
 const createIntern = async function (req, res) {
-try{
-  let data = req.body;
+  try {
+    let data = req.body;
 
-  if (!Object.keys(data).length) return res.status(404).send({ status: false, msg: "Please Provide Valid Input Details" })
-     //-------------------------------------check data validity----------------------------------
+    if (!Object.keys(data).length) return res.status(404).send({ status: false, msg: "Please Provide Valid Input Details" })
+    //-------------------------------------check data validity----------------------------------
 
     if (!(data.email)) { return res.status(400).send({ status: false, msg: "Email is required" }) }
     if (!(/^\w+([\.-]?\w+)@\w+([\. -]?\w+)(\.\w{2,3})+$/.test(data.email))) {
@@ -34,7 +34,12 @@ try{
       return res.status(400).send({ status: false, msg: "please provide a valid moblie Number" })
     }
 
-    if (!(data.collegeName)) { return res.status(400).send({ status: false, msg: "College name is required" }) }
+
+    if (!(data.collegeId)) { return res.status(400).send({ status: false, msg: "CollegeId is required" }) }
+    let college = await collegeModel.findById(data.collegeId)
+
+    if (!college) return res.status(400).send({ status: false, msg: "No such collegeId found" })
+
 
     //-------------------------------/check email duplicacy/------------------------------------------------------//
 
@@ -44,32 +49,28 @@ try{
 
     //-------------------------------/check mobile duplicacy/------------------------------------------------------//
 
-   let mobileCheck = await internModel.findOne({ mobile: data.mobile })
+    let mobileCheck = await internModel.findOne({ mobile: data.mobile })
 
     if (mobileCheck) { return res.status(409).send({ status: false, msg: "Mobile Number already exists" }) }
 
-    const collegeName = data.collegeName
-    
-    const collegeId = await collegeModel.findOne({ name: collegeName })
-    if (!collegeId) return res.status(400).send({ status: false, msg: "No such collegeId found" })
-    if (!mongoose.isValidObjectId(collegeId._id)) return res.status(400).send({ status: false, msg: "Enter a Valid collegeId"})
-  
-    
-    const newDataCollege = collegeId._id
-    
+ 
+    const internData = {
+      name: data.name, email: data.email, mobile: data.mobile, collegeId: data.collegeId}
+      const resultIntern = await internModel.create(internData)
+      res.status(201).send(resultIntern)
 
-    const savedData = { name: data.name, email: data.email, mobile: data.mobile, collegeId: newDataCollege }
-    const resultIntern = await internModel.create(savedData)
-    res.status(201).send(resultIntern)
-  }
+    }
 
 catch (err) {
 
-  return res.status(500).send({ ERROR: err.message })
+      return res.status(500).send({ ERROR: err.message })
 
-}
-}
+    }
+  }
 
+
+ 
+  
 
 
 module.exports.createIntern = createIntern
