@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const ObjectId = mongoose.Schema.Types.ObjectId
 
 const internSchema = new mongoose.Schema({
     name: {
@@ -11,27 +12,28 @@ const internSchema = new mongoose.Schema({
         trim: true,
         lowercase: true,
         unique: true,
-        required: 'Email address is required',
-        validate: {
-            validator: function(email){
-                return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w(2,3))+$/.test(email)
-            }, message: 'Please fill a valid email address', isAsync: false
-        }
+        required: 'Email address is required'
+        // validate: {
+        //     validator: function(email){
+        //         return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w(2,3))+$/.test(email)
+        //     }, message: 'Please fill a valid email address', isAsync: false
+        
     },
     mobile: {
         type: String,
         required: 'Number is required',
-        unique: true,
-        validate: {
-            validator: function(mobile){
-                return /^(\+\d{1,3}[- ]?)?\d{10}$/.test(mobile)
-            }, message: 'Please fill a valid mobile number'
-        }
+        unique: true
+        // validate: {
+        //     validator: function(mobile){
+        //         return /^(\+\d{1,3}[- ]?)?\d{10}$/.test(mobile)
+        //     }, message: 'Please fill a valid mobile number'
+        // }
     },
     collegeId: {
         required: 'Intern college is required',
-        type: mongoose.Types.ObjectId,
-        refs: 'College'
+        type: ObjectId,
+        ref: 'College',
+        trim:true
     },
     isDeleted: {
         type: Boolean,
