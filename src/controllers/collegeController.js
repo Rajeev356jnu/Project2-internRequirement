@@ -16,7 +16,7 @@ const createCollege = async function (req, res) {
   try {
     const data = req.body;
 
-    if (Object.keys(data).length = 0) { return res.status(400).send({ status: false, msg: "Input is required" }) }
+    if (!Object.keys(data).length ) { return res.status(400).send({ status: false, msg: "Input is required" }) }
 
       if (!isValid(data.name)) { return res.status(400).send({ status: false, msg: "Name is required" }) }
 
@@ -29,7 +29,7 @@ const createCollege = async function (req, res) {
       if (checkCollegeName) { return res.status(400).send({ msg: "Name Already exist" }) }
 
       let CollegeFullName = await collegeModel.findOne({ name: data.fullName })
-      if (CollegeFullName) { return res.status(400).send({ msg: "Name Already exist" }) }
+      if (CollegeFullName) { return res.status(400).send({ msg: "fullName Already exist" }) }
 
       
         if (!(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(data.logoLink)))
