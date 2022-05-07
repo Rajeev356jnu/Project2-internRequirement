@@ -57,7 +57,7 @@ const createIntern = async function (req, res) {
 
     const savedData = { name: data.name, email: data.email, mobile: data.mobile, collegeId: newDataCollege }
     const internData = await internModel.create(savedData)
-    res.status(201).send({ status: "internData Created", data: internData })
+    res.status(201).send({ status: true, data: internData })
 
   }
     
